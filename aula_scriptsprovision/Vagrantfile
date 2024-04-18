@@ -1,0 +1,15 @@
+script_mysql =<<-SCRIPT
+  apt update
+  cat /certs/cursoalura.pub >> .ssh/authorized_keys
+  echo 'mysql-server-5.7 mysql-server/root_password password admin@jeison' | sudo debconf-set-selections
+  echo "mysql-server-5.7 mysql-server/root_password_again password admin@jeison" | sudo debconf-set-selections
+  apt-get -y install mysql-server-5.7
+SCRIPT
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.provision "shell", inline: script_mysql
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "certs", "/certs"
+end
